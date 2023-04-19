@@ -1,5 +1,10 @@
 body {
-  background-color: lightblue;
+  background-image: url("bike1.jpg");
+  background-position: auto;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+  font-family: Georgia; 
 }
 
 .box1 {
@@ -7,4 +12,6 @@ body {
   border-color: black;
   margin: auto;
   padding: 1%;
+  background-color: antiquewhite;
+  opacity: 75%;
 }

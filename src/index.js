@@ -43,21 +43,45 @@ async function searchByUserSelection(color, stolen, city) {
 }
 
 // UI Logic
+// function printElements1(data) {
+//   data.forEach(element => {
+    
+//     let newDiv = document.createElement("div");
+//     newDiv.setAttribute("class", "box1");
+//     let modelParagraph = document.createElement("p");
+//     let manufacturerParagraph = document.createElement("p");
+//     let urlParagraph = document.createElement("p");
+//     modelParagraph.innerText = `Frame Model: ${element["frame_model"]}`;
+//     manufacturerParagraph.innerText = `Manufacturer Name: ${element["manufacturer_name"]}`;
+//     urlParagraph.innerText = `URL: ${element.url}`;
+//     newDiv.append(modelParagraph);
+//     newDiv.append(manufacturerParagraph);
+//     newDiv.append(urlParagraph);
+//     document.getElementById("response").append(newDiv);
+    
+//   });
+// }
+
+
 
 function printElements(data) {
   data.forEach(element => {
-    let newDiv = document.createElement("div");
-    newDiv.setAttribute("class", "box1");
-    let modelParagraph = document.createElement("p");
-    let manufacturerParagraph = document.createElement("p");
-    let urlParagraph = document.createElement("p");
-    modelParagraph.innerText = `Frame Model: ${element["frame_model"]}`;
-    manufacturerParagraph.innerText = `Manufacturer Name: ${element["manufacturer_name"]}`;
-    urlParagraph.innerText = `URL: ${element.url}`;
-    newDiv.append(modelParagraph);
-    newDiv.append(manufacturerParagraph);
-    newDiv.append(urlParagraph);
-    document.getElementById("response").append(newDiv);
+    const currentTime = Date.now();
+    const stolenDate = (element["date_stolen"])*1000;
+    if (currentTime - stolenDate <= 604800000) {
+      let newDiv = document.createElement("div");
+      newDiv.setAttribute("class", "box1");
+      let modelParagraph = document.createElement("p");
+      let manufacturerParagraph = document.createElement("p");
+      let urlParagraph = document.createElement("p");
+      modelParagraph.innerText = `Frame Model: ${element["frame_model"]}`;
+      manufacturerParagraph.innerText = `Manufacturer Name: ${element["manufacturer_name"]}`;
+      urlParagraph.innerText = `URL: ${element.url}`;
+      newDiv.append(modelParagraph);
+      newDiv.append(manufacturerParagraph);
+      newDiv.append(urlParagraph);
+      document.getElementById("response").append(newDiv);
+    }
   });
 }
 
@@ -69,8 +93,10 @@ function handleFormSubmission(event) {
   event.preventDefault();
   const city = document.querySelector('#location').value;
   const color = document.querySelector('#color').value;
-  const stolen = document.querySelector('#stolenness').value;
-  //document.querySelector('#location').value = null;
+  const stolen = document.querySelector("input[name='stolenness']:checked").value;
+  document.querySelector('#location').value = null;
+  document.querySelector('#color').value = null;
+  document.getElementById('response').innerText = null; 
   // searchByColor(color);
   // searchByStolenness(stolen);
   // searchByLocation(city);
