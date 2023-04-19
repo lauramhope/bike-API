@@ -62,8 +62,6 @@ async function searchByUserSelection(color, stolen, city) {
 //   });
 // }
 
-
-
 function printElements(data) {
   data.forEach(element => {
     const currentTime = Date.now();
@@ -97,9 +95,6 @@ function handleFormSubmission(event) {
   document.querySelector('#location').value = null;
   document.querySelector('#color').value = null;
   document.getElementById('response').innerText = null; 
-  // searchByColor(color);
-  // searchByStolenness(stolen);
-  // searchByLocation(city);
   searchByUserSelection(color, stolen, city);
 }
 
