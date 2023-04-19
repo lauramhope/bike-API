@@ -1,35 +1,80 @@
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './css/styles.css';
-import WeatherService from './weather-service.js';
+import BikeIndex from './bike.js';
 
 // Business Logic
 
-function getWeather(city) {
-  let promise = WeatherService.getWeather(city);
-  promise.then(function(weatherDataArray) {
-    printElements(weatherDataArray);
-  }, function(errorArray) {
-    printError(errorArray);
-  });
+// async function searchByColor(color) {
+//   const response = await BikeIndex.searchByColor(color);
+//   if (response.main) {
+//     printElements(response, color);
+//   } else {
+//     printError(response, color);
+//   }
+// }
+
+// async function searchByStolenness(stolen) {
+//   const response = await BikeIndex.searchByStolenness(stolen);
+//   if (response.main) {
+//     printElements(response, stolen);
+//   } else {
+//     printError(response, stolen);
+//   }
+// }
+
+// async function searchByLocation(city) {
+//   const response = await BikeIndex.searchByLocation(city);
+//   if (response.main) {
+//     printElements(response, city);
+//   } else {
+//     printError(response, city);
+//   }
+// }
+
+async function searchByUserSelection(color, stolen, city) {
+  const response = await BikeIndex.searchByUserSelection(color, stolen, city); 
+  if (response.bikes) {
+    console.log(response.bikes);
+    printElements(response.bikes);
+  } else {
+    printError(response); 
+  }
 }
 
 // UI Logic
 
 function printElements(data) {
-  document.querySelector('#showResponse').innerText = `The humidity in ${data[1]} is ${data[0].main.humidity}%.
-  The temperature in Kelvins is ${data[0].main.temp} degrees.`;
+  data.forEach(element => {
+    let newDiv = document.createElement("div");
+    newDiv.setAttribute("class", "box1");
+    let modelParagraph = document.createElement("p");
+    let manufacturerParagraph = document.createElement("p");
+    let urlParagraph = document.createElement("p");
+    modelParagraph.innerText = `Frame Model: ${element["frame_model"]}`;
+    manufacturerParagraph.innerText = `Manufacturer Name: ${element["manufacturer_name"]}`;
+    urlParagraph.innerText = `URL: ${element.url}`;
+    newDiv.append(modelParagraph);
+    newDiv.append(manufacturerParagraph);
+    newDiv.append(urlParagraph);
+    document.getElementById("response").append(newDiv);
+  });
 }
 
-function printError(error) {
-  document.querySelector('#showResponse').innerText = `There was an error accessing the weather data for ${error[2]}: ${error[0].status} ${error[0].statusText}: ${error[1].message}`;
+function printError() {
+  document.querySelector('#showResponse').innerText = `There was an error accessing the bike index data`;
 }
 
 function handleFormSubmission(event) {
   event.preventDefault();
   const city = document.querySelector('#location').value;
-  document.querySelector('#location').value = null;
-  getWeather(city);
+  const color = document.querySelector('#color').value;
+  const stolen = document.querySelector('#stolenness').value;
+  //document.querySelector('#location').value = null;
+  // searchByColor(color);
+  // searchByStolenness(stolen);
+  // searchByLocation(city);
+  searchByUserSelection(color, stolen, city);
 }
 
 window.addEventListener("load", function() {
