@@ -14,26 +14,17 @@ import BikeIndex from './bike.js';
 //   }
 // }
 
-// async function searchByStolenness(stolen) {
-//   const response = await BikeIndex.searchByStolenness(stolen);
-//   if (response.main) {
-//     printElements(response, stolen);
-//   } else {
-//     printError(response, stolen);
-//   }
-// }
-
-// async function searchByLocation(city) {
-//   const response = await BikeIndex.searchByLocation(city);
-//   if (response.main) {
-//     printElements(response, city);
-//   } else {
-//     printError(response, city);
-//   }
-// }
-
 async function searchByUserSelection(color, stolen, city) {
   const response = await BikeIndex.searchByUserSelection(color, stolen, city); 
+  if (response.bikes) {
+    printElements(response.bikes);
+  } else {
+    printError(response); 
+  }
+}
+
+async function displayFurtherResults(color, stolen, city, page) {
+  const response = await BikeIndex.displayFurtherResults(color, stolen, city, page); 
   if (response.bikes) {
     printElements(response.bikes);
   } else {
@@ -59,7 +50,6 @@ async function filterByStolen(city) {
 
 async function manufacturerStatistics(bikeList) {
   const list = await bikeList;
-  //console.log(list);
   let manufacturerStats = new Map();
   list.forEach(element => {
     if (manufacturerStats.has(element["manufacturer_name"])) {
@@ -72,11 +62,6 @@ async function manufacturerStatistics(bikeList) {
   });
   return manufacturerStats;
 }
-
-// function stolenSorter(inputMap) {
-//   const newMap = inputMap;
-//   let outputMap = new Map();
-// }
 
 // UI Logic
 // function printElements1(data) {
@@ -98,29 +83,26 @@ async function manufacturerStatistics(bikeList) {
 //   });
 // }
 
-// async function makeApiCall() {
-//   const response = await fetch("http://some-api-call.com");
-//   const jsonifiedResponse = await response.json();
-//   return jsonifiedResponse;
-// }
-
 async function printStatistics(city) {
   const stolenList = filterByStolen(city);
   const manufacturerStats = await manufacturerStatistics(stolenList);
-  let newUl = document.createElement("ul");
-  manufacturerStats.forEach(function(value, key) {
-    let liTag = document.createElement("li");
-    liTag.append(`${key}: ${value}`);
-    newUl.append(liTag);
-  });
-  document.getElementById("response").append(newUl);
+  //let newUl = document.createElement("ul");
+  // manufacturerStats.forEach(function(value, key) {
+  //   let liTag = document.createElement("li");
+  //   liTag.append(`${key}: ${value}`);
+  //   newUl.append(liTag);
+  // });
+  //document.getElementById("response").append(newUl);
   let statistic = [...manufacturerStats.entries()].reduce((b, e ) => e[1] > b[1] ? e : b);
-  document.getElementById('statistic').append(statistic);
+  let newDiv = document.getElementById('statistic');
+  newDiv.innerText = null;
+  newDiv.setAttribute("class", "box1");
+  newDiv.append(`${statistic[0]} is the most frequently stolen brand near ${city}.The stolen bike number is ${statistic[1]}.`);
 }
 
-
 function printElements(data) {
-  data.forEach(element => {
+  document.getElementById("response").innerText = null;
+  data.forEach(element => {    
     const currentTime = Date.now();
     const stolenDate = (element["date_stolen"])*1000;
     if (currentTime - stolenDate <= 604800000) {
@@ -152,10 +134,20 @@ function handleFormSubmission(event) {
   const city = document.querySelector('#location').value;
   const color = document.querySelector('#color').value;
   const stolen = document.querySelector("input[name='stolenness']:checked").value;
-  //document.querySelector('#location').value = null;
-  document.querySelector('#color').value = null;
-  document.getElementById('response').innerText = null; 
+  // document.querySelector('#color').value = null;
+  // document.getElementById('response').innerText = null; 
   searchByUserSelection(color, stolen, city);  
+}
+
+function handleNextPage(event) {
+  event.preventDefault();
+  const city = document.querySelector('#location').value;
+  const color = document.querySelector('#color').value;
+  const stolen = document.querySelector("input[name='stolenness']:checked").value;
+  const page = document.querySelector("button.selector").getAttribute("id");
+  displayFurtherResults(color, stolen, city, page);
+  let button = document.querySelector("button.selector");
+  button.setAttribute("id", parseInt(page) + 1);
 }
 
 function handleStatistics(event) {
@@ -167,27 +159,5 @@ function handleStatistics(event) {
 window.addEventListener("load", function() {
   document.querySelector('form').addEventListener("submit", handleFormSubmission);
   document.querySelector('form').addEventListener("submit", handleStatistics);
+  document.querySelector("button.selector").addEventListener("click", handleNextPage);
 });
-
-
-
-// function printElements(data) {
-//   data.forEach(element => {
-//     const currentTime = Date.now();
-//     const stolenDate = (element["date_stolen"])*1000;
-//     if (currentTime - stolenDate <= 604800000) {
-//       let newDiv = document.createElement("div");
-//       newDiv.setAttribute("class", "box1");
-//       let modelParagraph = document.createElement("p");
-//       let manufacturerParagraph = document.createElement("p");
-//       let urlParagraph = document.createElement("p");
-//       modelParagraph.innerText = `Frame Model: ${element["frame_model"]}`;
-//       manufacturerParagraph.innerText = `Manufacturer Name: ${element["manufacturer_name"]}`;
-//       urlParagraph.innerText = `URL: ${element.url}`;
-//       newDiv.append(modelParagraph);
-//       newDiv.append(manufacturerParagraph);
-//       newDiv.append(urlParagraph);
-//       document.getElementById("response").append(newDiv);
-//     }
-//   });
-// }
