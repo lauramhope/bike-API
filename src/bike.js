@@ -72,4 +72,23 @@ export default class BikeIndex {
       return error;
     }
   }
+
+  static async getManufacturerInfo(city) {
+    let urlString = `https://bikeindex.org:443/api/v3/search?page=1&per_page=100&stolenness=proximity`;
+    if (city != undefined) {
+      urlString = urlString.concat(`&location=${city}`);
+    }
+    try {
+      const response = await fetch(urlString);
+      const jsonifiedResponse = await response.json();
+      if (!response.ok) {
+        const errorMessage = `${response.status} ${response.statusText}
+        ${jsonifiedResponse.message}`;
+        throw new Error(errorMessage);
+      }
+      return jsonifiedResponse;
+    } catch(error) {
+      return error;
+    }
+  }
 } 
